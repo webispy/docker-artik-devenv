@@ -2,33 +2,33 @@ FROM ubuntu:latest
 ENV http_proxy http://12.26.226.2:8080
 ENV https_proxy http://12.26.226.2:8080
 
-RUN apt update && apt install -y sudo sed
+RUN apt-get update && apt-get install -y sudo sed
 
 RUN sed -i 's/archive.ubuntu.com/kr.archive.ubuntu.com/' /etc/apt/sources.list
 
-RUN apt update
+RUN apt-get update
 
 # Development environment
-#RUN apt install -y qemu-user-static build-essential cmake git kpartx \
+#RUN apt-get install -y qemu-user-static build-essential cmake git kpartx \
 #	gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
 #	gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
 #	libguestfs-tools doxygen chrpath
 
 # Fedora development environment
-#RUN apt install -y rpm createrepo
+#RUN apt-get install -y rpm createrepo
 
 # Debian development environment
-#RUN apt install -y debhelper
+#RUN apt-get install -y debhelper
 
 # Network utility
-RUN apt install -y iputils-ping net-tools
+RUN apt-get install -y iputils-ping net-tools
 
 # Terminal
-RUN apt install -y xterm
-#RUN apt install -y terminator
+RUN apt-get install -y xterm
+#RUN apt-get install -y terminator
 
 # Fonts
-#RUN apt install -y xfonts-terminus
+#RUN apt-get install -y xfonts-terminus
 
 RUN  mkdir -p /home/work && \
      echo "work:x:1000:1000:Developer,,,:/home/work:/bin/bash" >> /etc/passwd && \
