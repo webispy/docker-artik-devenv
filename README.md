@@ -3,7 +3,8 @@
 - Supports weird network environment (proxy and custom certificate)
 - Supports zsh (with oh-my-zsh)
 - Supports use of user account instead of root. (account name: 'work')
-- TODO: Support ARTIK 710/530 ubuntu build environment
+- Supports RPM build environment (fed-artik-tools)
+- Supports DEB build environment (sbuild)
 
 # Install Docker
 * https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/
@@ -99,36 +100,14 @@ artik-office            latest                441de749b491        About a minute
 
 # Run
 ## Without X11
-- Run a command in a new container 
+- Run a command in a new container
   - Create container with name 'haha'
   - Use 'artik-office' image
   - Share some files with host (/dev/bus/usb and ~/.ssh)
 ```sh
 $ docker run -it -v /dev/bus/usb:/dev/bus/usb -v ~/.ssh:/home/work/.ssh --privileged --name haha artik-office
 ➜  ~
-```
-
-- Download TizenRT and build in the container
-```sh
-➜  ~ git clone https://github.com/SamsungARTIK/TizenRT.git
-➜  ~ cd TizenRT/os/tools
-➜  tools git:(artik) ./configure.sh artik053/nettest
-➜  tools git:(artik) cd ..
-➜  os git:(artik) make
-➜  os git:(artik) sudo make download os
-
-# exit container
-➜  os git:(artik) exit
-```
-- Reuse the container
-```sh
-$ docker ps -a
-CONTAINER ID        IMAGE               COMMAND             CREATED              STATUS                          PORTS               NAMES
-6e2d2bbbc3a2        artik-office        "zsh"               About a minute ago   Exited (0) About a minute ago                       haha
-
-$ docker restart haha
-$ docker attach haha
-➜  ~
+➜  exit
 ```
 
 ## With X11
@@ -139,6 +118,57 @@ $ docker run -it -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /dev/bu
 ➜  ~
 ➜  ~ sudo apt install xterm
 ➜  ~ xterm
+```
+
+## Reuse the container
+```sh
+$ docker ps -a
+CONTAINER ID        IMAGE               COMMAND             CREATED              STATUS                          PORTS               NAMES
+6e2d2bbbc3a2        artik-office        "zsh"               About a minute ago   Exited (0) About a minute ago                       haha
+
+$ docker restart haha
+$ docker attach haha
+➜  ~
+```
+
+# Usage
+## TizenRT for ARTIK-05x
+```sh
+➜  ~ git clone https://github.com/SamsungARTIK/TizenRT.git
+➜  ~ cd TizenRT/os/tools
+➜  tools git:(artik) ./configure.sh artik053/nettest
+➜  tools git:(artik) cd ..
+➜  os git:(artik) make
+➜  os git:(artik) sudo make download os
+```
+
+## RPM build for ARTIK 520/710
+```sh
+# Download latest rootfs
+➜  ~ wget https://github.com/SamsungARTIK/fedora-spin-kickstarts/releases/download/release%2FA710_os_2.2.0/fedora-arm-artik710-rootfs-0710GC0F-44F-01QC-20170713.175433-f63a17cbfdaffd3385f23ea12388999a.tar.gz
+
+# Initialize environment using rootfs
+➜  ~ fed-artik-host-init-buildsys -I fedora-arm-artik710-rootfs-0710GC0F-44F-01QC-20170713.175433-f63a17cbfdaffd3385f23ea12388999a.tar.gz
+
+# Initialize chroot environment (It takes a long time...)
+➜  ~ fed-artik-init-buildsys
+
+# Now build your package
+➜  ~ cd my_pkg
+➜  my_pkg:(master) fed-artik-build
+```
+
+## DEB build for ARTIK 530(armhf)/710(arm64)
+```sh
+# Create armhf native environment
+➜  ~ mk-sbuild --arch armhf xenial
+
+# Now build your package
+➜  ~ sbuild --chroot xenial-armhf --arch armhf -j8
+
+# Tips. Start a root session that makes persistent changes
+➜  ~ schroot --chroot source:xenial-armhf --user root
+
 ```
 
 # Docker tips
