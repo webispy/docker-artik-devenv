@@ -32,11 +32,12 @@ RUN apt-get install -y language-pack-en \
 ENV LC_ALL en_US.UTF-8
 
 # Utility
-RUN apt-get install -y sudo iputils-ping net-tools dnsutils \
-		wget curl git vim man zsh minicom
+RUN apt-get install -y --no-install-recommends sudo iputils-ping net-tools \
+		dnsutils wget curl git vim man zsh minicom
 
 # Development environment
-RUN apt-get install -y qemu-user-static build-essential cmake kpartx \
+RUN apt-get install -y --no-install-recommends qemu-user-static \
+		build-essential cmake kpartx \
 		gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
 		gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
 		gcc-arm-none-eabi gdb-arm-none-eabi \
@@ -44,7 +45,8 @@ RUN apt-get install -y qemu-user-static build-essential cmake kpartx \
 		libguestfs-tools chrpath scons
 
 # Fedora and Debian development environment
-RUN apt-get install -y rpm createrepo debhelper
+RUN apt-get install -y --no-install-recommends rpm createrepo debhelper \
+		devscripts fakeroot
 RUN apt-get clean
 
 # Add 'work' user with sudo permission
@@ -73,5 +75,11 @@ ENV HOME /home/work
 WORKDIR /home/work
 RUN git clone http://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh \
 		&& cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc
+
+# fed-artik-tools
+RUN git clone https://github.com/SamsungARTIK/fed-artik-tools.git tools/fed-artik-tools \
+	    && cd tools/fed-artik-tools \
+	    && debuild -us -uc
+RUN find ./ -name "*.deb" -exec sudo dpkg -i '{}' \;
 
 CMD ["zsh"]
