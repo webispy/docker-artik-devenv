@@ -1,0 +1,21 @@
+$apt_allow_unauthenticated = 1;
+$environment_filter = [
+	'^PATH$',
+	'^DEB(IAN|SIGN)?_[A-Z_]+$',
+	'^(C(PP|XX)?|LD|F)FLAGS(_APPEND)?$',
+	'^USER(NAME)?$',
+	'^LOGNAME$',
+	'^HOME$',
+	'^TERM$',
+	'^SHELL$',
+	'^no_proxy$',
+	'^http_proxy$',
+	'^https_proxy$',
+	'^ftp_proxy$',
+];
+
+# Directory for writing build logs to
+$log_dir=$ENV{HOME}."/ubuntu/logs";
+
+# don't remove this, Perl needs it:
+1;

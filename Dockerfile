@@ -14,6 +14,7 @@ ARG https_proxy
 ENV http_proxy $http_proxy
 ENV https_proxy $https_proxy
 ENV DEBIAN_FRONTEND noninteractive
+ENV USER work
 
 # Modify apt repository to KR mirror
 RUN apt-get update && apt-get install -y sed apt-utils
@@ -46,16 +47,20 @@ RUN apt-get install -y --no-install-recommends qemu-user-static \
 
 # Fedora and Debian development environment
 RUN apt-get install -y --no-install-recommends rpm createrepo debhelper \
-		devscripts fakeroot
+		devscripts fakeroot quilt dh-autoreconf dh-systemd \
+		ubuntu-dev-tools sbuild moreutils debootstrap
 RUN apt-get clean
 
-# Add 'work' user with sudo permission
-RUN useradd -ms /bin/bash work
-RUN echo "work ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/work \
-		&& chmod 0440 /etc/sudoers.d/work
+# Add '$USER' user with sudo permission
+RUN useradd -ms /bin/bash $USER
+RUN echo "$USER ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$USER \
+		&& chmod 0440 /etc/sudoers.d/$USER
 
-# Add 'work' user to dialout group to use COM ports
-RUN adduser work dialout
+# Add '$USER' user to dialout group to use COM ports
+RUN adduser $USER dialout
+
+# Add '$USER' user to sbuild group
+RUN adduser $USER sbuild
 
 # Fix proxy environment issue on sudo command
 RUN echo 'Defaults env_keep="http_proxy https_proxy ftp_proxy no_proxy"' >> /etc/sudoers
@@ -68,11 +73,11 @@ RUN wget http://ymorin.is-a-geek.org/download/kconfig-frontends/kconfig-frontend
 		&& make \
 		&& make install
 
-# ZSH
-RUN chsh -s /bin/zsh work
-USER work
-ENV HOME /home/work
-WORKDIR /home/work
+# ZSH & oh-my-zsh
+RUN chsh -s /bin/zsh $USER
+USER $USER
+ENV HOME /home/$USER
+WORKDIR /home/$USER
 RUN git clone http://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh \
 		&& cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc
 
@@ -81,5 +86,15 @@ RUN git clone https://github.com/SamsungARTIK/fed-artik-tools.git tools/fed-arti
 	    && cd tools/fed-artik-tools \
 	    && debuild -us -uc
 RUN find ./ -name "*.deb" -exec sudo dpkg -i '{}' \;
+
+# sbuild
+RUN mkdir -p ubuntu/scratch
+RUN mkdir -p ubuntu/build
+RUN mkdir -p ubuntu/logs
+RUN echo "/home/$USER/ubuntu/scratch    /scratch    none    rw,bind    0    0" | sudo tee -a /etc/schroot/sbuild/fstab
+COPY sbuild/sbuildrc /home/$USER/.sbuildrc
+RUN sudo chown $USER.$USER .sbuildrc
+COPY sbuild/mk-sbuild.rc /home/$USER/.mk-sbuild.rc
+RUN sudo chown $USER.$USER .mk-sbuild.rc
 
 CMD ["zsh"]
