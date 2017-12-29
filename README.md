@@ -1,4 +1,8 @@
-# ARTIK office docker :)
+[![Docker Pulls](https://img.shields.io/docker/pulls/webispy/artik_devenv.svg)](https://hub.docker.com/r/webispy/artik_devenv/)
+
+# ARTIK Developer environment docker :)
+
+- https://hub.docker.com/r/webispy/artik_devenv/
 - Supports TizenRT build environment
 - Supports weird network environment (proxy and custom certificate)
 - Supports zsh (with oh-my-zsh)
@@ -6,7 +10,8 @@
 - Supports RPM build environment (fed-artik-tools)
 - Supports DEB build environment (sbuild)
 
-# Install Docker
+# Install the Docker
+
 * https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/
 ```sh
 $ sudo add-apt-repository \
@@ -19,8 +24,16 @@ $ sudo apt-get update
 $ sudo apt install docker-ce
 ```
 
-# Customizing
+# Quick start
+- Download prebuilt image from docker hub
+```sh
+$ docker run -it webispy/artik_devenv
+```
+
+# Customizing the docker service
+
 ## Proxy environment
+
 ```sh
 $ sudo mkdir -p /etc/systemd/system/docker.service.d
 $ sudo vi /etc/systemd/system/docker.service.d/http-proxy.conf
@@ -36,6 +49,7 @@ $ sudo systemctl restart docker
 ```
 
 ## Use custom path to the docker data storage (e.g. SSD)
+
 ```sh
 $ sudo systemctl stop docker
 
@@ -52,6 +66,7 @@ $ sudo systemctl start docker
 ```
 
 ## DNS setting (Because sometimes DNS resolving does not work...)
+
 ```sh
 # Get DNS list
 $ nmcli dev show | grep DNS
@@ -67,19 +82,25 @@ $ sudo vi /etc/docker/daemon.json
 $ sudo systemctl restart docker
 ```
 
-# Image build
-## Download
+# Building the image manually.
+
+1. Download
+
 ```sh
 $ git clone https://github.com/webispy/docker-artik-office.git
 ```
 
-## Custom certificate
+2. Optional: Install custom certificates
+
 - To install custom certificates to an image, you must copy the .crt files to the /certs path before using the 'docker build' command.
 ```sh
 $ cp my.crt docker-artik-office/certs/
 ```
 
-## Without proxy environment
+3. Build
+
+- Without proxy environment
+
 ```sh
 $ docker build docker-artik-office -t artik-office
 $ docker image ls
@@ -88,7 +109,8 @@ artik-office            latest                441de749b491        About a minute
 ...
 ```
 
-## With proxy environment
+- With proxy environment
+
 ```sh
 $ docker build --build-arg http_proxy=http://x.x.x.x:port --build-arg https_proxy=http://x.x.x.x:port docker-artik-office -t artik-office
 
@@ -99,11 +121,14 @@ artik-office            latest                441de749b491        About a minute
 ```
 
 # Run
+
+- You can use manually build image('artik-office') or downloaded image('webispy/artik_devenv')
+- "--name" option: create container with name 'haha'
+
 ## Without X11
-- Run a command in a new container
-  - Create container with name 'haha'
-  - Use 'artik-office' image
-  - Share some files with host (/dev/bus/usb and ~/.ssh)
+
+- Share some files with host (/dev/bus/usb and ~/.ssh)
+
 ```sh
 $ docker run -it -v /dev/bus/usb:/dev/bus/usb -v ~/.ssh:/home/work/.ssh --privileged --name haha artik-office
 ➜  ~
@@ -111,8 +136,10 @@ $ docker run -it -v /dev/bus/usb:/dev/bus/usb -v ~/.ssh:/home/work/.ssh --privil
 ```
 
 ## With X11
-- Set DISPLAY environment (e.g. ':0')
+
+- Set DISPLAY environment variable
 - Share /tmp/.X11-unix
+
 ```sh
 $ docker run -it -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /dev/bus/usb:/dev/bus/usb -v ~/.ssh:/home/work/.ssh --privileged artik-office
 ➜  ~
@@ -121,6 +148,7 @@ $ docker run -it -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /dev/bu
 ```
 
 ## Reuse the container
+
 ```sh
 $ docker ps -a
 CONTAINER ID        IMAGE               COMMAND             CREATED              STATUS                          PORTS               NAMES
@@ -132,7 +160,9 @@ $ docker attach haha
 ```
 
 # Usage
+
 ## TizenRT for ARTIK-05x
+
 ```sh
 ➜  ~ git clone https://github.com/SamsungARTIK/TizenRT.git
 ➜  ~ cd TizenRT/os/tools
@@ -143,6 +173,7 @@ $ docker attach haha
 ```
 
 ## RPM build for ARTIK 520/710
+
 ```sh
 # Download latest rootfs
 ➜  ~ wget https://github.com/SamsungARTIK/fedora-spin-kickstarts/releases/download/release%2FA710_os_2.2.0/fedora-arm-artik710-rootfs-0710GC0F-44F-01QC-20170713.175433-f63a17cbfdaffd3385f23ea12388999a.tar.gz
@@ -159,6 +190,7 @@ $ docker attach haha
 ```
 
 ## DEB build for ARTIK 530(armhf)/710(arm64)
+
 ```sh
 # Create armhf native environment
 ➜  ~ mk-sbuild --arch armhf xenial
@@ -172,13 +204,16 @@ $ docker attach haha
 ```
 
 # Docker tips
+
 ## Image management
+
 ```sh
 $ docker image ls
 $ docker image rm xxxxx
 ```
 
 ## Container management
+
 ```sh
 $ docker ps -a
 $ docker ps rm xxxxx
