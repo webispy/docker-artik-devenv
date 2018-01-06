@@ -49,6 +49,7 @@ RUN apt-get install -y --no-install-recommends sudo iputils-ping net-tools \
 		libguestfs-tools chrpath scons rpm createrepo debhelper \
 		devscripts fakeroot quilt dh-autoreconf dh-systemd \
 		ubuntu-dev-tools sbuild moreutils debootstrap \
+		exuberant-ctags cscope \
 		&& apt-get clean
 
 # Apply custom certificate
@@ -95,5 +96,11 @@ COPY sbuild/.sbuildrc sbuild/.mk-sbuild.rc /home/$USER/
 RUN mkdir -p ubuntu/scratch && mkdir -p ubuntu/build && mkdir -p ubuntu/logs \
 		&& echo "/home/$USER/ubuntu/scratch    /scratch    none    rw,bind    0    0" | sudo tee -a /etc/schroot/sbuild/fstab \
 		&& sudo chown $USER.$USER .sbuildrc && sudo chown $USER.$USER .mk-sbuild.rc
+
+# vundle
+COPY vim/.vimrc /home/$USER/
+RUN git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim \
+    && vim +PluginInstall +qall \
+	&& sudo chown $USER.$USER .vimrc
 
 CMD ["zsh"]
