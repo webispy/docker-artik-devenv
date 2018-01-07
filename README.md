@@ -27,7 +27,24 @@ $ sudo apt install docker-ce
 # Quick start
 - Download prebuilt image from docker hub
 ```sh
-$ docker run -it webispy/artik_devenv
+# Basic usage
+$ docker run -it --name haha webispy/artik_devenv
+➜  ~
+➜  ~ {build your source code}
+➜  ~ exit
+
+# Re-use the previous container
+$ docker start haha
+$ docker attach haha
+➜  ~
+➜  ~ {build your source code}
+➜  ~ exit
+
+# Run with host system sharing (USB device, SSH configuration)
+$ docker run -it -v /dev/bus/usb:/dev/bus/usb -v ~/.ssh:/home/work/.ssh --privileged --name haha webispy/artik_devenv
+
+# Run with proxy configuration (proxy address: x.x.x.x, proxy port: n)
+$ docker run -it -v /dev/bus/usb:/dev/bus/usb -v ~/.ssh:/home/work/.ssh --privileged -e http_proxy=http://x.x.x.x:n -e https_proxy=http://x.x.x.x:n --name haha webispy/artik_devenv
 ```
 
 # Customizing the docker service
@@ -132,7 +149,7 @@ artik-office            latest                441de749b491        About a minute
 ```sh
 $ docker run -it -v /dev/bus/usb:/dev/bus/usb -v ~/.ssh:/home/work/.ssh --privileged --name haha artik-office
 ➜  ~
-➜  exit
+➜  ~ exit
 ```
 
 ## With X11
@@ -154,7 +171,7 @@ $ docker ps -a
 CONTAINER ID        IMAGE               COMMAND             CREATED              STATUS                          PORTS               NAMES
 6e2d2bbbc3a2        artik-office        "zsh"               About a minute ago   Exited (0) About a minute ago                       haha
 
-$ docker restart haha
+$ docker start haha
 $ docker attach haha
 ➜  ~
 ```
