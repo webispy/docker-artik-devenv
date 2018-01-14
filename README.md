@@ -8,6 +8,9 @@
 - Supports zsh (with oh-my-zsh)
 - Supports use of user account instead of root. (account name: 'work')
 - Supports RPM build environment (fed-artik-tools)
+  - ARTIK-710 [![Docker Pulls](https://img.shields.io/docker/pulls/webispy/artik_devenv_f710.svg)](https://hub.docker.com/r/webispy/artik_devenv_f710/)
+  - ARTIK-530 [![Docker Pulls](https://img.shields.io/docker/pulls/webispy/artik_devenv_f530.svg)](https://hub.docker.com/r/webispy/artik_devenv_f530/)
+  - ARTIK-520 [![Docker Pulls](https://img.shields.io/docker/pulls/webispy/artik_devenv_f520.svg)](https://hub.docker.com/r/webispy/artik_devenv_f520/)
 - Supports DEB build environment (sbuild)
 
 # Install the Docker
