@@ -18,7 +18,7 @@
 
 FROM ubuntu:xenial
 LABEL maintainer="webispy@gmail.com" \
-      version="0.1" \
+      version="0.2" \
       description="ARTIK Development environment"
 
 ARG http_proxy
@@ -27,30 +27,62 @@ ARG https_proxy
 ENV http_proxy=$http_proxy \
     https_proxy=$https_proxy \
     DEBIAN_FRONTEND=noninteractive \
-    USER=work
+    USER=work \
+    LC_ALL=en_US.UTF-8 \
+    LANG=$LC_ALL
 
 # Modify apt repository to KR mirror
-RUN apt-get update && apt-get install -y sed apt-utils \
+RUN apt-get update && apt-get install -y --no-install-recommends sed apt-utils \
 		&& sed -i 's/archive.ubuntu.com/kr.archive.ubuntu.com/' /etc/apt/sources.list \
-		&& apt-get update && apt-get upgrade -y \
+		&& apt-get update \
 		&& apt-get install -y ca-certificates language-pack-en \
-		&& locale-gen en_US.UTF-8 \
-		&& dpkg-reconfigure locales
-ENV LC_ALL en_US.UTF-8
-
-# Packages
-RUN apt-get install -y --no-install-recommends sudo iputils-ping net-tools \
-		dnsutils wget curl git vim man zsh minicom \
-		qemu-user-static build-essential cmake kpartx \
-		gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
+		&& locale-gen $LC_ALL \
+		&& dpkg-reconfigure locales \
+		&& apt-get install -y --no-install-recommends \
+		bison \
+		build-essential \
+		chrpath \
+		cmake \
+		createrepo \
+		cscope \
+		curl \
+		debhelper \
+		debootstrap \
+		devscripts \
+		dh-autoreconf dh-systemd \
+		dnsutils \
+		exuberant-ctags \
+		fakeroot \
+		flex \
+		g++ \
 		gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
-		gcc-arm-none-eabi gdb-arm-none-eabi \
-		bison flex gperf libncurses5-dev zlib1g-dev gettext g++ \
-		libguestfs-tools chrpath scons rpm createrepo debhelper \
-		devscripts fakeroot quilt dh-autoreconf dh-systemd \
-		ubuntu-dev-tools sbuild moreutils debootstrap \
-		exuberant-ctags cscope \
-		&& apt-get clean
+		gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
+		gcc-arm-none-eabi \
+		gdb-arm-none-eabi \
+		gettext \
+		git \
+		gperf \
+		iputils-ping \
+		kpartx \
+		libncurses5-dev \
+		libguestfs-tools \
+		man \
+		minicom \
+		moreutils \
+		net-tools \
+		qemu-user-static \
+		quilt \
+		rpm \
+		sbuild \
+		scons \
+		sudo \
+		ubuntu-dev-tools \
+		vim \
+		wget \
+		zlib1g-dev \
+		zsh \
+		&& apt-get clean \
+		&& rm -rf /var/lib/apt/lists/*
 
 # Apply custom certificate
 COPY certs/* /usr/local/share/ca-certificates/
@@ -73,7 +105,8 @@ RUN wget http://ymorin.is-a-geek.org/download/kconfig-frontends/kconfig-frontend
 		&& cd kconfig-frontends-4.11.0.1 \
 		&& ./configure --prefix=/usr --enable-mconf --disable-gconf --disable-qconf \
 		&& make \
-		&& make install
+		&& make install \
+		&& rm -rf /kconfig-frontends-4.11.0.1*
 
 # --- USER -------------------------------------------------------------------
 
@@ -87,9 +120,11 @@ RUN git clone http://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh \
 
 # fed-artik-tools for RPM packaging
 RUN git clone https://github.com/SamsungARTIK/fed-artik-tools.git tools/fed-artik-tools \
-	    && cd tools/fed-artik-tools \
-	    && debuild -us -uc \
-		&& find ./ -name "*.deb" -exec sudo dpkg -i '{}' \;
+		&& cd tools/fed-artik-tools \
+		&& debuild -us -uc \
+		&& sudo dpkg -i ../*.deb \
+		&& cd \
+		&& rm -rf tools
 
 # sbuild
 COPY sbuild/.sbuildrc sbuild/.mk-sbuild.rc /home/$USER/
@@ -100,7 +135,7 @@ RUN mkdir -p ubuntu/scratch && mkdir -p ubuntu/build && mkdir -p ubuntu/logs \
 # vundle
 COPY vim/.vimrc /home/$USER/
 RUN git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim \
-    && vim +PluginInstall +qall \
-	&& sudo chown $USER.$USER .vimrc
+		&& vim +PluginInstall +qall \
+		&& sudo chown $USER.$USER .vimrc
 
 CMD ["zsh"]

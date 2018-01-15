@@ -30,7 +30,7 @@
 # Now, you can create a container using "artik_devenv_f530" image.
 # $ docker run -it --privileged artik_devenv_f530
 
-FROM webispy/artik_devenv
+FROM webispy/artik_devenv:latest
 LABEL maintainer="webispy@gmail.com" \
       version="0.1" \
       description="ARTIK Development environment for ARTIK 530 Fedora"
