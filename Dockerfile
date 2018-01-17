@@ -39,6 +39,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends sed apt-utils \
 		&& locale-gen $LC_ALL \
 		&& dpkg-reconfigure locales \
 		&& apt-get install -y --no-install-recommends \
+		binfmt-support \
 		bison \
 		build-essential \
 		chrpath \
