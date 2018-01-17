@@ -8,14 +8,12 @@
 - Supports zsh (with oh-my-zsh)
 - Supports use of user account instead of root. (account name: 'work')
 - Supports RPM build environment (fed-artik-tools)
-  - ARTIK-710 [![Docker Pulls](https://img.shields.io/docker/pulls/webispy/artik_devenv_f710.svg)](https://hub.docker.com/r/webispy/artik_devenv_f710/)
-  - ARTIK-530 [![Docker Pulls](https://img.shields.io/docker/pulls/webispy/artik_devenv_f530.svg)](https://hub.docker.com/r/webispy/artik_devenv_f530/)
-  - ARTIK-520 [![Docker Pulls](https://img.shields.io/docker/pulls/webispy/artik_devenv_f520.svg)](https://hub.docker.com/r/webispy/artik_devenv_f520/)
 - Supports DEB build environment (sbuild)
 
 # Install the Docker
 
 * https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/
+
 ```sh
 $ sudo add-apt-repository \
 	"deb [arch=amd64] https://download.docker.com/linux/ubuntu \
@@ -28,7 +26,9 @@ $ sudo apt install docker-ce
 ```
 
 # Quick start
+
 - Download prebuilt image from docker hub
+
 ```sh
 # Basic usage
 $ docker run -it --name haha webispy/artik_devenv
@@ -113,6 +113,7 @@ $ git clone https://github.com/webispy/docker-artik-office.git
 2. Optional: Install custom certificates
 
 - To install custom certificates to an image, you must copy the .crt files to the /certs path before using the 'docker build' command.
+
 ```sh
 $ cp my.crt docker-artik-office/certs/
 ```
