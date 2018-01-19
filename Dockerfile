@@ -18,7 +18,7 @@
 
 FROM ubuntu:xenial
 LABEL maintainer="webispy@gmail.com" \
-      version="0.2" \
+      version="0.3" \
       description="ARTIK Development environment"
 
 ARG http_proxy
@@ -75,6 +75,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends sed apt-utils \
 		quilt \
 		rpm \
 		sbuild \
+		schroot \
 		scons \
 		sudo \
 		ubuntu-dev-tools \
@@ -116,10 +117,11 @@ RUN chsh -s /bin/zsh $USER
 USER $USER
 ENV HOME /home/$USER
 WORKDIR /home/$USER
-RUN git clone http://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh \
+RUN git clone https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh \
 		&& cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc
 
 # fed-artik-tools for RPM packaging
+# - https://github.com/SamsungARTIK/fed-artik-tools
 RUN git clone https://github.com/SamsungARTIK/fed-artik-tools.git tools/fed-artik-tools \
 		&& cd tools/fed-artik-tools \
 		&& debuild -us -uc \
@@ -127,16 +129,24 @@ RUN git clone https://github.com/SamsungARTIK/fed-artik-tools.git tools/fed-arti
 		&& cd \
 		&& rm -rf tools
 
-# sbuild
+# Sbuild for DEB packaging
+# - https://github.com/SamsungARTIK/ubuntu-build-service
 COPY sbuild/.sbuildrc sbuild/.mk-sbuild.rc /home/$USER/
 RUN mkdir -p ubuntu/scratch && mkdir -p ubuntu/build && mkdir -p ubuntu/logs \
 		&& echo "/home/$USER/ubuntu/scratch    /scratch    none    rw,bind    0    0" | sudo tee -a /etc/schroot/sbuild/fstab \
 		&& sudo chown $USER.$USER .sbuildrc && sudo chown $USER.$USER .mk-sbuild.rc
+
+# To run Sbuild normally in the docker, schroot and sbuild must be declared as
+# volume. Sbuild internally has logic to mount using overlayfs or aufs, which
+# fails for files in the docker. Because of this, you have to declare it as
+# volume so that the target files are recognized as ext4.
+VOLUME ["/var/lib/schroot", "/var/lib/sbuild"]
 
 # vundle
 COPY vim/.vimrc /home/$USER/
 RUN git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim \
 		&& vim +PluginInstall +qall \
 		&& sudo chown $USER.$USER .vimrc
+
 
 CMD ["zsh"]
