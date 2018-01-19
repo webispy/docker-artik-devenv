@@ -1,4 +1,4 @@
-[![Docker Pulls](https://img.shields.io/docker/pulls/webispy/artik_devenv.svg)](https://hub.docker.com/r/webispy/artik_devenv/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/webispy/artik_devenv.svg)](https://hub.docker.com/r/webispy/artik_devenv/) [![Docker Build Status](https://img.shields.io/docker/build/webispy/artik_devenv.svg)](https://hub.docker.com/r/webispy/artik_devenv/)
 
 # ARTIK Developer environment docker :)
 
