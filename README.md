@@ -27,7 +27,14 @@ $ sudo apt install docker-ce
 
 # Quick start
 
-- Download prebuilt image from docker hub
+- Install qemu-user-static
+
+```sh
+$ sudo apt install binfmt-support qemu-user-static
+$ update-binfmts --display
+```
+
+- Run docker with prebuilt image from docker hub
 
 ```sh
 # Basic usage
