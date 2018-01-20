@@ -136,11 +136,29 @@ RUN mkdir -p ubuntu/scratch && mkdir -p ubuntu/build && mkdir -p ubuntu/logs \
 		&& echo "/home/$USER/ubuntu/scratch    /scratch    none    rw,bind    0    0" | sudo tee -a /etc/schroot/sbuild/fstab \
 		&& sudo chown $USER.$USER .sbuildrc && sudo chown $USER.$USER .mk-sbuild.rc
 
-# To run Sbuild normally in the docker, schroot and sbuild must be declared as
-# volume. Sbuild internally has logic to mount using overlayfs or aufs, which
-# fails for files in the docker. Because of this, you have to declare it as
-# volume so that the target files are recognized as ext4.
-VOLUME ["/var/lib/schroot", "/var/lib/sbuild"]
+# Sbuild in docker issue
+# Sbuild internally has logic to mount using overlayfs or aufs, which fails for
+# files in the docker. There are two solutions(using the volume or using tmpfs)
+# , which you can use as you like.
+#
+# * Solution 1.
+# Declare x and b as a docker volume. This is internally recognized them to
+# ext4, so there is no problem with sbuild's overlay and aufs. However, the
+# volume is not included in the image at the time of the docker commit.
+#
+# VOLUME ["/var/lib/schroot", "/var/lib/sbuild"]
+#
+# * Solution 2.
+# We can use mount with tmpfs. (https://wiki.debian.org/sbuild)
+# But, you need to change 'union-type=aufs' to 'union-type=overlay' in your
+# configuration file(/etc/schroot/chroot.d/{your-chroot-conf} manually.
+#
+# COPY sbuild/04tmpfs /etc/schroot/setup.d/
+# RUN sudo chmod 755 /etc/schroot/setup.d/04tmpfs
+#
+COPY sbuild/04tmpfs /etc/schroot/setup.d/
+RUN sudo chmod 755 /etc/schroot/setup.d/04tmpfs \
+		&& echo "none /var/lib/schroot/union/overlay tmpfs uid=root,gid=root,mode=0750 0 0" | sudo tee -a /etc/fstab
 
 # vundle
 COPY vim/.vimrc /home/$USER/
