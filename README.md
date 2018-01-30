@@ -109,12 +109,36 @@ $ sudo vi /etc/docker/daemon.json
 $ sudo systemctl restart docker
 ```
 
+## Docker storage driver
+
+If you are using the 'aufs' storage driver, you should change it to 'overlay2'
+
+```sh
+# Check current storage driver
+$ docker info | grep Storage
+Storage Driver: aufs
+
+# Change aufs to overlay2
+$ sudo vi /etc/docker/daemon.json
+{
+	...,
+	"storage-driver": "overlay2"
+}
+
+# Restart docker service
+$ sudo systemctl restart docker
+
+# Check storage driver
+$ docker info | grep Storage
+Storage Driver: overlay2
+```
+
 # Building the image manually.
 
 1. Download
 
 ```sh
-$ git clone https://github.com/webispy/docker-artik-office.git
+$ git clone https://github.com/webispy/docker-artik-devenv.git
 ```
 
 2. Optional: Install custom certificates
@@ -122,7 +146,7 @@ $ git clone https://github.com/webispy/docker-artik-office.git
 - To install custom certificates to an image, you must copy the .crt files to the /certs path before using the 'docker build' command.
 
 ```sh
-$ cp my.crt docker-artik-office/certs/
+$ cp my.crt docker-artik-devenv/certs/
 ```
 
 3. Build
@@ -130,27 +154,27 @@ $ cp my.crt docker-artik-office/certs/
 - Without proxy environment
 
 ```sh
-$ docker build docker-artik-office -t artik-office
+$ docker build docker-artik-devenv -t artik_devenv
 $ docker image ls
 REPOSITORY              TAG                   IMAGE ID            CREATED              SIZE
-artik-office            latest                441de749b491        About a minute ago   1.65GB
+artik_devenv            latest                441de749b491        About a minute ago   1.65GB
 ...
 ```
 
 - With proxy environment
 
 ```sh
-$ docker build --build-arg http_proxy=http://x.x.x.x:port --build-arg https_proxy=http://x.x.x.x:port docker-artik-office -t artik-office
+$ docker build --build-arg http_proxy=http://x.x.x.x:port --build-arg https_proxy=http://x.x.x.x:port docker-artik-devenv -t artik_devenv
 
 $ docker image ls
 REPOSITORY              TAG                   IMAGE ID            CREATED              SIZE
-artik-office            latest                441de749b491        About a minute ago   1.65GB
+artik_devenv            latest                441de749b491        About a minute ago   1.65GB
 ...
 ```
 
 # Run
 
-- You can use manually build image('artik-office') or downloaded image('webispy/artik_devenv')
+- You can use manually build image('artik_devenv') or downloaded image('webispy/artik_devenv')
 - "--name" option: create container with name 'haha'
 
 ## Without X11
@@ -158,7 +182,7 @@ artik-office            latest                441de749b491        About a minute
 - Share some files with host (/dev/bus/usb and ~/.ssh)
 
 ```sh
-$ docker run -it -v /dev/bus/usb:/dev/bus/usb -v ~/.ssh:/home/work/.ssh --privileged --name haha artik-office
+$ docker run -it -v /dev/bus/usb:/dev/bus/usb -v ~/.ssh:/home/work/.ssh --privileged --name haha artik_devenv
 ➜  ~
 ➜  ~ exit
 ```
@@ -169,7 +193,7 @@ $ docker run -it -v /dev/bus/usb:/dev/bus/usb -v ~/.ssh:/home/work/.ssh --privil
 - Share /tmp/.X11-unix
 
 ```sh
-$ docker run -it -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /dev/bus/usb:/dev/bus/usb -v ~/.ssh:/home/work/.ssh --privileged artik-office
+$ docker run -it -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /dev/bus/usb:/dev/bus/usb -v ~/.ssh:/home/work/.ssh --privileged artik_devenv
 ➜  ~
 ➜  ~ sudo apt install xterm
 ➜  ~ xterm
@@ -180,7 +204,7 @@ $ docker run -it -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /dev/bu
 ```sh
 $ docker ps -a
 CONTAINER ID        IMAGE               COMMAND             CREATED              STATUS                          PORTS               NAMES
-6e2d2bbbc3a2        artik-office        "zsh"               About a minute ago   Exited (0) About a minute ago                       haha
+6e2d2bbbc3a2        artik_devenv        "zsh"               About a minute ago   Exited (0) About a minute ago                       haha
 
 $ docker start haha
 $ docker attach haha
