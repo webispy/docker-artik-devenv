@@ -6,14 +6,16 @@
 # Supported boards
 # - 05x series (053, 055, ...): TizenRT
 # - 5x0 series (520, 530, ...): Fedora, Ubuntu
-# - 7x0 series (710, ...): Fedora, Ubuntu
+# - 7x0 series (710, ...): Fedora, Ubuntu(arm64)
 #
 # Not supported boards
 # - 020 (Bluetooth): use the Simplicity Studio (Silicon Labs)
 # - 030 (Zigbee/Thread): use the Simplicity Studio (Silicon Labs)
 #
-# docker build --build-arg http_proxy=http://x.x.x.x:port --build-arg https_proxy=http://x.x.x.x:port docker-artik-office -t artik-office
-# docker run -it -v /dev/bus/usb:/dev/bus/usb -v ~/.ssh:/home/work/.ssh --privileged artik-office
+# Manual image build
+# $ git clone https://github.com/webispy/docker-artik-devenv
+# $ docker build --build-arg http_proxy=http://x.x.x.x:port --build-arg https_proxy=http://x.x.x.x:port docker-artik-devenv -t artik_devenv
+# $ docker run -it -v /dev/bus/usb:/dev/bus/usb -v ~/.ssh:/home/work/.ssh --privileged artik_devenv
 #
 
 FROM ubuntu:xenial
@@ -131,31 +133,24 @@ RUN git clone https://github.com/SamsungARTIK/fed-artik-tools.git tools/fed-arti
 
 # Sbuild for DEB packaging
 # - https://github.com/SamsungARTIK/ubuntu-build-service
+# - https://wiki.debian.org/sbuild
+#
+# * Sbuild in docker issue
+#   Sbuild internally has logic to mount using overlayfs or aufs, which fails
+#   for files in the docker. To use sbuild, you must add the following option
+#   when running the 'docker run' command.
+#
+#     -v /var/lib/schroot
+#
+#   Declare /var/lib/schroot as a docker volume. This is internally recognized
+#   to ext4, so there is no problem with sbuild's overlay and aufs.
+#
 COPY sbuild/.sbuildrc sbuild/.mk-sbuild.rc /home/$USER/
 RUN mkdir -p ubuntu/scratch && mkdir -p ubuntu/build && mkdir -p ubuntu/logs \
 		&& echo "/home/$USER/ubuntu/scratch    /scratch    none    rw,bind    0    0" | sudo tee -a /etc/schroot/sbuild/fstab \
 		&& sudo chown $USER.$USER .sbuildrc && sudo chown $USER.$USER .mk-sbuild.rc
 
-# Sbuild in docker issue
-# Sbuild internally has logic to mount using overlayfs or aufs, which fails for
-# files in the docker. There are two solutions(using the volume or using tmpfs)
-# , which you can use as you like.
-#
-# * Solution 1.
-# Declare x and b as a docker volume. This is internally recognized them to
-# ext4, so there is no problem with sbuild's overlay and aufs. However, the
-# volume is not included in the image at the time of the docker commit.
-#
-# VOLUME ["/var/lib/schroot", "/var/lib/sbuild"]
-#
-# * Solution 2.
-# We can use mount with tmpfs. (https://wiki.debian.org/sbuild)
-# But, you need to change 'union-type=aufs' to 'union-type=overlay' in your
-# configuration file(/etc/schroot/chroot.d/{your-chroot-conf} manually.
-#
-# COPY sbuild/04tmpfs /etc/schroot/setup.d/
-# RUN sudo chmod 755 /etc/schroot/setup.d/04tmpfs
-#
+# sbuild tmpfs setup to speed-up
 COPY sbuild/04tmpfs /etc/schroot/setup.d/
 RUN sudo chmod 755 /etc/schroot/setup.d/04tmpfs \
 		&& echo "none /var/lib/schroot/union/overlay tmpfs uid=root,gid=root,mode=0750 0 0" | sudo tee -a /etc/fstab

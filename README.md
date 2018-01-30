@@ -192,6 +192,9 @@ $ docker attach haha
 ## TizenRT for ARTIK-05x
 
 ```sh
+# Start container
+$ docker run -it --privileged -v /dev/bus/usb:/dev/bus/usb webispy/artik_devenv
+
 ➜  ~ git clone https://github.com/SamsungARTIK/TizenRT.git
 ➜  ~ cd TizenRT/os/tools
 ➜  tools git:(artik) ./configure.sh artik053/nettest
@@ -203,6 +206,9 @@ $ docker attach haha
 ## RPM build for ARTIK 520/710
 
 ```sh
+# Start container
+$ docker run -it --privileged webispy/artik_devenv
+
 # Download latest rootfs
 ➜  ~ wget https://github.com/SamsungARTIK/fedora-spin-kickstarts/releases/download/release%2FA710_os_2.2.0/fedora-arm-artik710-rootfs-0710GC0F-44F-01QC-20170713.175433-f63a17cbfdaffd3385f23ea12388999a.tar.gz
 
@@ -217,19 +223,27 @@ $ docker attach haha
 ➜  my_pkg:(master) fed-artik-build
 ```
 
+You can use a [webispy/artik_devenv_f710](https://hub.docker.com/r/webispy/artik_devenv_f710/) image that has completed the fed-artik-tools setup process above.
+
 ## DEB build for ARTIK 530(armhf)/710(arm64)
 
 ```sh
+# Start container
+$ docker run -it --privileged -v /var/lib/chroots webispy/artik_devenv
+
 # Create armhf native environment
 ➜  ~ mk-sbuild --arch armhf xenial
 
 # Now build your package
-➜  ~ sbuild --chroot xenial-armhf --arch armhf -j8
+➜  ~ git clone https://github.com/xxxx
+➜  ~ cd xxxx
+➜  xxxx ~ sbuild --chroot xenial-armhf --arch armhf -j8
 
 # Tips. Start a root session that makes persistent changes
 ➜  ~ schroot --chroot source:xenial-armhf --user root
-
 ```
+
+You can use a [webispy/artik_devenv_u710](https://hub.docker.com/r/webispy/artik_devenv_u710/) image that has completed the mk-sbuild setup process above.
 
 # Docker tips
 
