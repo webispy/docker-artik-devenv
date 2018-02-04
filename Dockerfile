@@ -20,15 +20,10 @@
 
 FROM ubuntu:xenial
 LABEL maintainer="webispy@gmail.com" \
-      version="0.3" \
+      version="0.4" \
       description="ARTIK Development environment"
 
-ARG http_proxy
-ARG https_proxy
-
-ENV http_proxy=$http_proxy \
-    https_proxy=$https_proxy \
-    DEBIAN_FRONTEND=noninteractive \
+ENV DEBIAN_FRONTEND=noninteractive \
     USER=work \
     LC_ALL=en_US.UTF-8 \
     LANG=$LC_ALL
@@ -160,6 +155,5 @@ COPY vim/.vimrc /home/$USER/
 RUN git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim \
 		&& vim +PluginInstall +qall \
 		&& sudo chown $USER.$USER .vimrc
-
 
 CMD ["zsh"]
