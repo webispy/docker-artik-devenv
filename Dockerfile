@@ -20,7 +20,7 @@
 
 FROM ubuntu:xenial
 LABEL maintainer="webispy@gmail.com" \
-      version="0.4" \
+      version="0.5" \
       description="ARTIK Development environment"
 
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -68,6 +68,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends sed apt-utils \
 		minicom \
 		moreutils \
 		net-tools \
+		pkg-config \
 		qemu-user-static \
 		quilt \
 		rpm \
@@ -115,7 +116,8 @@ USER $USER
 ENV HOME /home/$USER
 WORKDIR /home/$USER
 RUN git clone https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh \
-		&& cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc
+		&& cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc \
+		&& echo "DISABLE_AUTO_UPDATE=true" >> ~/.zshrc
 
 # fed-artik-tools for RPM packaging
 # - https://github.com/SamsungARTIK/fed-artik-tools
