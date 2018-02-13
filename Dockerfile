@@ -29,13 +29,11 @@ ENV DEBIAN_FRONTEND=noninteractive \
     LANG=$LC_ALL
 
 # Modify apt repository to KR mirror
-RUN apt-get update && apt-get install -y --no-install-recommends sed apt-utils \
-		&& sed -i 's/archive.ubuntu.com/kr.archive.ubuntu.com/' /etc/apt/sources.list \
-		&& apt-get update \
-		&& apt-get install -y ca-certificates language-pack-en \
+RUN apt-get update && apt-get install -y ca-certificates language-pack-en \
 		&& locale-gen $LC_ALL \
 		&& dpkg-reconfigure locales \
 		&& apt-get install -y --no-install-recommends \
+		apt-utils \
 		binfmt-support \
 		bison \
 		build-essential \
@@ -50,6 +48,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends sed apt-utils \
 		dh-autoreconf dh-systemd \
 		dnsutils \
 		exuberant-ctags \
+		elfutils \
 		fakeroot \
 		flex \
 		g++ \
@@ -75,8 +74,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends sed apt-utils \
 		sbuild \
 		schroot \
 		scons \
+		sed \
 		sudo \
 		ubuntu-dev-tools \
+		unzip \
 		vim \
 		wget \
 		zlib1g-dev \
