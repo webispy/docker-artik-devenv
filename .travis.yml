@@ -5,8 +5,12 @@ env:
   global:
   - secure: cMzbzOjh4Hm5YP5yCs1Tzsye4Zfiyof9ciUW3PGFtKMpyJLGi94l0X1oJ7+DsI5pmocbAaxgBmb/ofCi6BKU6pPP8Oco1RsZjfFOhO/BMplBdt7tSkKBwVh8KW0gkdQyhIZZ1cLOLekVEEGjahPYZ3smaTPyuhsJpqxPwjSfUa5RiDzh7sNuZvivGa8roKnvrrxga/uy8xDDJxuSFzZRr2c9bbXsRQxADxBBiqKm+qGuB/Whhe9lo+L4eIqC/cCBAPFfDncEKjZ53c62W/ZpWmur5Kh4fokKK9o92w+KhB3dbQ1VETF/w4zIOsqAiJwQ9vVs9eums7cNh000aFd6y/cDj0sKWDIOgSKEd1VOAK/p0/gCNeVZn/tAdD93bXZoKyJO8r2Yv9+iIaXF9zWC+/Qq+OQFh+SSXsXzNAt9wXk0Vh5tRsqlZ+1BOzbx0wKUMKyQhR3mihmRONVwIuaguOQPmQGBdpqY5zJmQwWVaVbCttPski+w7NgUJ70gCJfj2cfh5xb1FQ1j/gIGTFd5AkDcXpFCCwd/LXggeY2bse+7CbFxZ7ngX4GnaH9/Obf5cwI0dzUdIe3DVGFhJUEb3a1burZQSFYd2F1uo+o62UV7MEGCM957rgI/fADftfwyrO68IM1WFkinFnnB3FgLRQXygm1GyAs3hMcf82ehNpM=
 
+install:
+  - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
+  - sudo service docker restart
+
 script:
-  - docker build -t webispy/artik_devenv .
+  - docker build --squash -t webispy/artik_devenv .
 
 before_deploy:
   - docker images
