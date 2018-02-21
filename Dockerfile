@@ -39,19 +39,23 @@ RUN apt-get update && apt-get install -y ca-certificates language-pack-en \
 		build-essential \
 		chrpath \
 		cmake \
+		cpio \
 		createrepo \
 		cscope \
 		curl \
+		debianutils \
 		debhelper \
 		debootstrap \
 		devscripts \
 		dh-autoreconf dh-systemd \
+		diffstat \
 		dnsutils \
 		exuberant-ctags \
 		elfutils \
 		fakeroot \
 		flex \
 		g++ \
+		gawk \
 		gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
 		gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
 		gcc-arm-none-eabi \
@@ -63,11 +67,14 @@ RUN apt-get update && apt-get install -y ca-certificates language-pack-en \
 		kpartx \
 		libncurses5-dev \
 		libguestfs-tools \
+		libsdl1.2-dev \
 		man \
 		minicom \
 		moreutils \
 		net-tools \
 		pkg-config \
+		python3-pip \
+		python3-pexpect \
 		qemu-user-static \
 		quilt \
 		rpm \
@@ -75,11 +82,15 @@ RUN apt-get update && apt-get install -y ca-certificates language-pack-en \
 		schroot \
 		scons \
 		sed \
+		socat \
 		sudo \
 		ubuntu-dev-tools \
 		unzip \
+		texinfo \
 		vim \
 		wget \
+		xterm \
+		xz-utils \
 		zlib1g-dev \
 		zsh \
 		&& apt-get clean \
