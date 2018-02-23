@@ -10,26 +10,23 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
-" The following are examples of different formats supported.
-" Keep Plugin commands between vundle#begin/end.
-" plugin on GitHub repo
-Plugin 'tpope/vim-fugitive'
-" plugin from http://vim-scripts.org/vim/scripts.html
-" Plugin 'L9'
-" Git plugin not hosted on GitHub
-"  Plugin 'git://git.wincent.com/command-t.git'
-" git repos on your local machine (i.e. when working on your own plugin)
-"  Plugin 'file:///home/gmarik/path/to/plugin'
-" The sparkup vim script is in a subdirectory of this repo called vim.
-" Pass the path to set the runtimepath properly.
-"  Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
-" Install L9 and avoid a Naming conflict if you've already installed a
-" different version somewhere else.
-" Plugin 'ascenator/L9', {'name': 'newL9'}
-
-Plugin 'wombat256.vim'
 Plugin 'taglist.vim'
 Plugin 'Trinity'
+Plugin 'tpope/vim-fugitive'
+
+" Interface
+Plugin 'vim-airline/vim-airline'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'mhinz/vim-startify'
+
+" Syntax
+Plugin 'pangloss/vim-javascript'
+Plugin 'node.js'
+Plugin 'godlygeek/tabular'
+Plugin 'plasticboy/vim-markdown'
+
+" Colorscheme
+Plugin 'wombat256.vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -46,6 +43,7 @@ filetype plugin indent on    " required
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
 
+set shell=/bin/bash
 set ts=4
 set sw=4
 set softtabstop=4
@@ -59,12 +57,17 @@ set hlsearch
 set t_Co=256
 set laststatus=2
 
-set cc=80
 :silent! colorscheme wombat256mod
 
+set cc=80
 highlight ExtraWhitespace ctermbg=red guibg=red
 :match ExtraWhitespace /\s\+$\| \+ze\t/
 
 nmap <F8> :TrinityToggleAll<CR>
 nmap <F2> :TlistToggle<CR>
 
+" airline
+let g:airline_powerline_fonts = 0
+
+" markdown
+let g:vim_markdown_folding_disabled = 1
