@@ -129,7 +129,9 @@ ENV HOME /home/$USER
 WORKDIR /home/$USER
 RUN git clone https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh \
 		&& cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc \
-		&& echo "DISABLE_AUTO_UPDATE=true" >> ~/.zshrc
+		&& echo "DISABLE_AUTO_UPDATE=true" >> ~/.zshrc \
+		&& git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.zsh-syntax-highlighting \
+		&& echo "source /home/work/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ~/.zshrc
 
 # fed-artik-tools for RPM packaging
 # - https://github.com/SamsungARTIK/fed-artik-tools
