@@ -84,6 +84,7 @@ RUN apt-get update && apt-get install -y ca-certificates language-pack-en \
 		sed \
 		socat \
 		sudo \
+		tig \
 		ubuntu-dev-tools \
 		unzip \
 		texinfo \
@@ -119,6 +120,10 @@ RUN wget http://ymorin.is-a-geek.org/download/kconfig-frontends/kconfig-frontend
 		&& make \
 		&& make install \
 		&& rm -rf /kconfig-frontends-4.11.0.1*
+
+# repo command
+RUN curl https://storage.googleapis.com/git-repo-downloads/repo > /usr/bin/repo \
+		&& chmod a+x /usr/bin/repo
 
 # --- USER -------------------------------------------------------------------
 
