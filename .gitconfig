@@ -1,0 +1,5 @@
+[core]
+	editor = vim
+	pager = less -XRF
+[merge]
+	tool = vimdiff

@@ -62,6 +62,7 @@ RUN apt-get update && apt-get install -y ca-certificates language-pack-en \
 		gdb-arm-none-eabi \
 		gettext \
 		git \
+		git-review \
 		gperf \
 		iputils-ping \
 		kpartx \
@@ -176,5 +177,10 @@ COPY vim/.vimrc /home/$USER/
 RUN git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim \
 		&& vim +PluginInstall +qall \
 		&& sudo chown $USER.$USER .vimrc
+
+# GIT config
+#  - 'less' tool: terminal screen clear behavior issue in zsh
+COPY .gitconfig /home/$USER/
+RUN sudo chown $USER.$USER .gitconfig
 
 CMD ["zsh"]
