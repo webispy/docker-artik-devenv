@@ -58,7 +58,6 @@ RUN apt-get update && apt-get install -y ca-certificates language-pack-en \
 		gawk \
 		gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
 		gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
-		gcc-arm-none-eabi \
 		gdb-arm-none-eabi \
 		gettext \
 		git \
@@ -66,6 +65,7 @@ RUN apt-get update && apt-get install -y ca-certificates language-pack-en \
 		gperf \
 		iputils-ping \
 		kpartx \
+		libc6-i386 \
 		libncurses5-dev \
 		libguestfs-tools \
 		libsdl1.2-dev \
@@ -121,6 +121,13 @@ RUN wget http://ymorin.is-a-geek.org/download/kconfig-frontends/kconfig-frontend
 		&& make \
 		&& make install \
 		&& rm -rf /kconfig-frontends-4.11.0.1*
+
+# TizenRT official toolchain
+RUN cd /opt \
+		&& wget https://launchpad.net/gcc-arm-embedded/4.9/4.9-2015-q3-update/+download/gcc-arm-none-eabi-4_9-2015q3-20150921-linux.tar.bz2 \
+		&& tar xvf gcc-arm-none-eabi-4_9-2015q3-20150921-linux.tar.bz2 \
+		&& rm gcc-arm-none-eabi-4_9-2015q3-20150921-linux.tar.bz2
+ENV PATH="/opt/gcc-arm-none-eabi-4_9-2015q3/bin:${PATH}"
 
 # repo command
 RUN curl https://storage.googleapis.com/git-repo-downloads/repo > /usr/bin/repo \
