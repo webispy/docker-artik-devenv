@@ -28,7 +28,6 @@ ENV DEBIAN_FRONTEND=noninteractive \
     LC_ALL=en_US.UTF-8 \
     LANG=$LC_ALL
 
-# Modify apt repository to KR mirror
 RUN apt-get update && apt-get install -y ca-certificates language-pack-en \
 		&& locale-gen $LC_ALL \
 		&& dpkg-reconfigure locales \
