@@ -189,4 +189,8 @@ RUN git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.v
 COPY .gitconfig /home/$USER/
 RUN sudo chown $USER.$USER .gitconfig
 
+# TIG(Text-mode interfacefor Git) config
+COPY .tigrc /home/$USER
+RUN sudo chown $USER.$USER .tigrc
+
 CMD ["zsh"]

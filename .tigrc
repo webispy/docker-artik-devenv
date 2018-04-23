@@ -1,0 +1,14 @@
+# View
+set main-view = line-number:no,interval=5 id:display=yes,width=10 date:display=relative author:display=full commit-title:display=yes,graph=yes,refs=yes,overflow=no
+set diff-view = line-number:no,interval=5 text:yes,commit-title-overflow=no
+
+# Misc
+set focus-child = yes
+set horizontal-scroll = 50%
+set vertical-split = vertical
+
+# Key
+bind stage   <Down>     move-down
+bind stage   <Up>       move-up
+bind diff    <Down>     move-down
+bind diff    <Up>       move-up
