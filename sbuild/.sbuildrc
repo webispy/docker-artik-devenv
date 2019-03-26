@@ -12,6 +12,7 @@ $environment_filter = [
 	'^http_proxy$',
 	'^https_proxy$',
 	'^ftp_proxy$',
+	'^REST_TEST_SERVER$'
 ];
 
 # Directory for writing build logs to
