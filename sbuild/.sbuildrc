@@ -18,5 +18,14 @@ $environment_filter = [
 # Directory for writing build logs to
 $log_dir=$ENV{HOME}."/ubuntu/logs";
 
+$external_commands = {
+    "pre-build-commands" => [
+        ['/home/'.$ENV{USER}.'/ubuntu/repo/scan.sh'],
+    ],
+    "chroot-setup-commands" => [
+        ['/repo/prep.sh'],
+    ],
+};
+
 # don't remove this, Perl needs it:
 1;

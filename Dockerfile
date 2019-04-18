@@ -142,8 +142,10 @@ WORKDIR /home/$USER
 RUN git clone https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh \
 		&& cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc \
 		&& echo "DISABLE_AUTO_UPDATE=true" >> ~/.zshrc \
+		&& echo "DISABLE_UPDATE_PROMPT=true" >> ~/.zshrc \
 		&& git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.zsh-syntax-highlighting \
-		&& echo "source /home/work/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ~/.zshrc
+		&& echo "source /home/work/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ~/.zshrc \
+		&& mkdir -p ~/ubuntu/scratch && mkdir -p ~/ubuntu/build && mkdir -p ~/ubuntu/logs && mkdir -p ~/ubuntu/repo && mkdir -p ~/ubuntu/debs
 
 # fed-artik-tools for RPM packaging
 # - https://github.com/SamsungARTIK/fed-artik-tools
@@ -169,9 +171,12 @@ RUN git clone https://github.com/SamsungARTIK/fed-artik-tools.git tools/fed-arti
 #   to ext4, so there is no problem with sbuild's overlay and aufs.
 #
 COPY sbuild/.sbuildrc sbuild/.mk-sbuild.rc /home/$USER/
-RUN mkdir -p ubuntu/scratch && mkdir -p ubuntu/build && mkdir -p ubuntu/logs \
-		&& echo "/home/$USER/ubuntu/scratch    /scratch    none    rw,bind    0    0" | sudo tee -a /etc/schroot/sbuild/fstab \
-		&& sudo chown $USER.$USER .sbuildrc && sudo chown $USER.$USER .mk-sbuild.rc
+COPY repo/chup repo/clean.sh repo/localdebs.sh repo/prep.sh repo/scan.sh /home/$USER/ubuntu/repo/
+RUN echo "/home/$USER/ubuntu/scratch    /scratch    none    rw,bind    0    0" | sudo tee -a /etc/schroot/sbuild/fstab \
+		&& echo "/home/$USER/ubuntu/repo    /repo   none    rw,bind    0    0" | sudo tee -a /etc/schroot/sbuild/fstab \
+		&& sudo chown $USER.$USER .sbuildrc && sudo chown $USER.$USER .mk-sbuild.rc \
+		&& sudo chown $USER.$USER ~/ubuntu/repo/* \
+		&& chmod 755 ~/ubuntu/repo/*.sh ~/ubuntu/repo/chup
 
 # sbuild tmpfs setup to speed-up
 COPY sbuild/04tmpfs /etc/schroot/setup.d/

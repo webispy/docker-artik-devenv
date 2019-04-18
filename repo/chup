@@ -1,0 +1,8 @@
+skipped="edgy|feisty|gutsy|intrepid"
+
+for d in `schroot -l | egrep -- '-source$|^source:' | egrep -v "($skipped)"`
+do
+    echo "Updating '$d'"
+    schroot -q -c $d -u root -- sh -c 'apt-get -qq update && apt-get -qy dist-upgrade && apt-get autoremove -qy && apt-get clean'
+    echo ""
+done
